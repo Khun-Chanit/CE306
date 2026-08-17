@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>เครื่องแปลงสกุลเงิน — Rate Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="stage">
+
+  <div class="eyebrow"><span class="dot" id="live-dot"></span>อัตราแลกเปลี่ยนสด</div>
+  <h1>เครื่องแปลงสกุลเงิน</h1>
+  <p class="sub">กรอกจำนวนเงินฝั่งใดฝั่งหนึ่ง ระบบคำนวณอีกฝั่งให้อัตโนมัติแบบเรียลไทม์ พร้อมกราฟย้อนหลังและประวัติการแปลง</p>
+
+  <!-- Split-flap rate board -->
+  <div class="board" id="board">
+    <div class="board-head">
+      <span id="pair-label">THB → USD</span>
+      <span><b>1 <span id="from-code-mini">THB</span></b> เท่ากับ</span>
+    </div>
+    <div class="flap-row" id="flap-row" aria-live="polite" aria-label="อัตราแลกเปลี่ยนปัจจุบัน"></div>
+    <div class="board-foot">
+      <span class="live-indicator"><span class="pulse-dot"></span>อัปเดตล่าสุด: <span id="updated-time">—</span></span>
+      <span class="src-tag" id="src-tag">กำลังเชื่อมต่อ…</span>
+    </div>
+  </div>
+
+  <!-- Stock-style rate chart -->
+  <div class="chart-card" id="chart-card">
+    <div class="chart-head">
+      <div class="chart-title">
+        <span id="chart-pair-label">THB / USD</span>
+        <span class="change-badge" id="change-badge">—</span>
+      </div>
+      <div class="range-tabs" id="range-tabs">
+        <button class="range-tab" data-range="7">7D</button>
+        <button class="range-tab active" data-range="30">30D</button>
+        <button class="range-tab" data-range="90">90D</button>
+      </div>
+    </div>
+    <div class="chart-wrap" id="chart-wrap">
+      <canvas id="rate-chart" aria-label="กราฟอัตราแลกเปลี่ยนย้อนหลัง" role="img"></canvas>
+      <p class="chart-empty" id="chart-empty">เลือกสกุลเงินสองสกุลที่ต่างกันเพื่อดูกราฟย้อนหลัง</p>
+    </div>
+  </div>
+
+  <!-- Converter -->
+  <div class="card">
+
+    <div class="field">
+      <span class="field-label">ต้นทาง</span>
+      <select id="currency-one" aria-label="สกุลเงินต้นทาง"></select>
+      <div class="amount-wrap">
+        <input type="text" id="amount-one" inputmode="decimal" placeholder="0.00" autocomplete="off">
+      </div>
+    </div>
+
+    <div class="swap-row">
+      <button class="swap-btn" id="swap-btn" title="สลับสกุลเงิน" aria-label="สลับสกุลเงินต้นทางและปลายทาง">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7 10l-4 4 4 4"/><path d="M3 14h13a4 4 0 0 0 4-4"/>
+          <path d="M17 14l4-4-4-4"/><path d="M21 10H8a4 4 0 0 0-4 4"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="field">
+      <span class="field-label">ปลายทาง</span>
+      <select id="currency-two" aria-label="สกุลเงินปลายทาง"></select>
+      <div class="amount-wrap">
+        <input type="text" id="amount-two" inputmode="decimal" placeholder="0.00" autocomplete="off">
+      </div>
+    </div>
+
+    <p class="confirm-hint">กรอกจำนวนเงินแล้วกดยืนยันเพื่อบันทึกรายการแลกเปลี่ยน</p>
+    <div class="actions">
+      <button class="confirm-btn" id="confirm-btn" disabled>ยืนยันจำนวนเงิน</button>
+      <button class="primary-action" id="clear-btn">ล้างข้อมูล</button>
+    </div>
+  </div>
+
+  <!-- History -->
+  <div class="ledger">
+    <div class="ledger-head">
+      <h2>ประวัติการแปลงเงิน</h2>
+      <span>ย้อนหลัง 10 รายการล่าสุด</span>
+    </div>
+    <button class="clear-history" id="clear-history-btn">ล้างประวัติ</button>
+    <ul class="ledger-list" id="ledger-list"></ul>
+    <p class="ledger-empty" id="ledger-empty">ยังไม่มีประวัติการแปลงเงิน</p>
+  </div>
+
+  <footer class="note">อัตราจาก Frankfurter (ECB) — หากออฟไลน์ระบบจะใช้อัตราสำรองโดยประมาณ</footer>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
