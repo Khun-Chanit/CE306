@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>บันทึกธุรกรรม</title>
+	<style>
+		:root { font-family: Arial, sans-serif; color: #243047; background: #f3f6fb; }
+		body { max-width: 900px; margin: 0 auto; padding: 24px; }
+		h1 { text-align: center; color: #1d4ed8; }
+		.card { background: white; padding: 20px; margin: 16px 0; border-radius: 12px; box-shadow: 0 2px 10px #0001; }
+		form, .search { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+		input, select, button { padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1rem; }
+		button { cursor: pointer; border: 0; background: #2563eb; color: white; }
+		button.clear { background: #dc2626; width: 100%; margin-top: 14px; }
+		.summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; }
+		.summary div { padding: 14px; border-radius: 8px; background: #eff6ff; }
+		.income { color: #15803d; } .expense { color: #dc2626; }
+		ul { list-style: none; padding: 0; margin: 0; }
+		li { display: grid; grid-template-columns: 45px 90px 1fr 130px 120px; gap: 8px; align-items: center; padding: 12px 6px; border-bottom: 1px solid #e2e8f0; }
+		.header { font-weight: bold; background: #f8fafc; }
+		.empty { display: block; text-align: center; color: #64748b; padding: 20px; }
+		@media (max-width: 600px) { li { grid-template-columns: 35px 70px 1fr; } li span:nth-child(4), li span:nth-child(5) { grid-column: 3; } .summary { grid-template-columns: 1fr; } }
+	</style>
+</head>
+<body>
+	<h1>บันทึกธุรกรรม</h1>
+	<section class="card">
+		<form id="transactionForm">
+			<select id="type" aria-label="ประเภท" required><option value="expense">รายจ่าย</option><option value="income">รายรับ</option></select>
+			<input id="name" type="text" placeholder="ชื่อรายการ" required>
+			<select id="category" aria-label="หมวดหมู่" required>
+				<option value="อาหาร 🍜">อาหาร 🍜</option><option value="เดินทาง 🚗">เดินทาง 🚗</option><option value="ช้อปปิ้ง 🛍️">ช้อปปิ้ง 🛍️</option><option value="เงินเดือน 💰">เงินเดือน 💰</option><option value="อื่นๆ 📌">อื่นๆ 📌</option>
+			</select>
+			<input id="amount" type="number" min="0.01" step="0.01" placeholder="จำนวนเงิน (บาท)" required>
+			<button type="submit">เพิ่มรายการ</button>
+		</form>
+	</section>
+
+	<section class="card summary">
+		<div>รายรับรวม<br><strong id="incomeTotal" class="income">฿0.0</strong></div>
+		<div>รายจ่ายรวม<br><strong id="expenseTotal" class="expense">฿0.0</strong></div>
+		<div>คงเหลือสุทธิ<br><strong id="balance">฿0.0</strong></div>
+	</section>
+
+	<section class="card">
+		<div class="search"><input id="search" type="search" placeholder="ค้นหาชื่อรายการ..." aria-label="ค้นหา"></div>
+		<h2>ประวัติรายการ</h2>
+		<ul id="transactionList">
+			<li class="header"><span>ID</span><span>ประเภท</span><span>ชื่อรายการ</span><span>หมวดหมู่</span><span>จำนวนเงิน</span></li>
+		</ul>
+		<button id="clearButton" class="clear" type="button">ล้างข้อมูลทั้งหมด</button>
+	</section>
+
+	<script>
+		const transactions = [];
+		const form = document.querySelector('#transactionForm');
+		const list = document.querySelector('#transactionList');
+		const money = value => `฿${value.toLocaleString('th-TH', { minimumFractionDigits: 1, maximumFractionDigits: 2 })}`;
+
+		function render() {
+			const query = document.querySelector('#search').value.trim().toLowerCase();
+			list.innerHTML = '<li class="header"><span>ID</span><span>ประเภท</span><span>ชื่อรายการ</span><span>หมวดหมู่</span><span>จำนวนเงิน</span></li>';
+			const shown = transactions.filter(t => t.name.toLowerCase().includes(query));
+			shown.forEach((t, index) => {
+				const item = document.createElement('li');
+				item.innerHTML = `<span>${transactions.indexOf(t) + 1}</span><span class="${t.type}">${t.type === 'income' ? 'รายรับ' : 'รายจ่าย'}</span><span>${t.name}</span><span>${t.category}</span><span class="${t.type}">${money(t.amount)}</span>`;
+				list.appendChild(item);
+			});
+			if (!shown.length) { const empty = document.createElement('li'); empty.className = 'empty'; empty.textContent = 'ไม่พบรายการ'; list.appendChild(empty); }
+			const income = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
+			const expense = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
+			document.querySelector('#incomeTotal').textContent = money(income);
+			document.querySelector('#expenseTotal').textContent = money(expense);
+			document.querySelector('#balance').textContent = money(income - expense);
+		}
+		form.addEventListener('submit', event => { event.preventDefault(); transactions.push({ type: form.elements.type.value, name: form.elements.name.value.trim(), category: form.elements.category.value, amount: Number(form.elements.amount.value) }); form.reset(); render(); });
+		document.querySelector('#search').addEventListener('input', render);
+		document.querySelector('#clearButton').addEventListener('click', () => { if (transactions.length && confirm('ยืนยันการล้างข้อมูลทั้งหมดหรือไม่?')) { transactions.length = 0; render(); } });
+		render();
+	</script>
+</body>
+</html>
