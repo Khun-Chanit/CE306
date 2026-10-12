@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MHUKROP TACKERS Web App - ศูนย์รวมคนรักหมูกรอบ</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font: Kanit -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-[#0b0c10] text-gray-100 font-sans min-h-screen flex flex-col justify-between selection:bg-orange-500 selection:text-white custom-scrollbar">
+
+    <!-- Top Navigation Header -->
+    <header class="sticky top-0 z-50 bg-[#0d0e13]/90 backdrop-blur-md border-b border-[#1f232e]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+            
+            <!-- Logo Section -->
+            <div class="flex items-center space-x-3 cursor-pointer shrink-0" onclick="resetFilters()">
+                <div class="w-11 h-11 bg-gradient-to-tr from-orange-600 to-amber-500 rounded-2xl shadow-lg shadow-orange-500/20 flex items-center justify-center text-2xl font-black text-white">
+                    🍖
+                </div>
+                <div>
+                    <div class="flex items-center text-xl sm:text-2xl font-black tracking-tight leading-none">
+                        <span class="text-white">MHUKROP</span>
+                        <span class="text-orange-500 ml-0.5">TACKERS</span>
+                    </div>
+                    <p class="text-[11px] text-gray-400 mt-1 flex items-center gap-1 font-medium">
+                        ศูนย์รวมคนรักหมูกรอบ <span class="text-orange-400">🍖</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Search Bar (Header Middle) -->
+            <div class="hidden lg:flex items-center flex-1 max-w-md mx-4">
+                <div class="relative w-full">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                    <input type="text" id="headerSearchInput" oninput="syncSearch(this.value)"
+                           placeholder="ค้นหาร้านหมูกรอบ ย่าน ชื่อเมนู..." 
+                           class="w-full bg-[#161820] text-sm text-gray-200 pl-11 pr-4 py-2.5 rounded-full border border-[#272b38] focus:outline-none focus:border-orange-500 transition placeholder-gray-500">
+                </div>
+            </div>
+
+            <!-- Action Buttons Right -->
+            <div class="flex items-center space-x-2 sm:space-x-3 shrink-0">
+                <button onclick="openModal('addShopModal')" class="hidden sm:flex items-center space-x-2 bg-[#161820] hover:bg-[#202430] text-gray-200 px-4 py-2.5 rounded-xl border border-[#272b38] transition text-xs sm:text-sm font-semibold">
+                    <i class="fa-solid fa-plus text-orange-400"></i>
+                    <span>แจ้งเพิ่มร้าน</span>
+                </button>
+
+                <button onclick="openQuickReview()" class="flex items-center space-x-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white px-4 py-2.5 rounded-xl transition text-xs sm:text-sm font-bold shadow-lg shadow-orange-500/20">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    <span>เขียนรีวิว</span>
+                </button>
+
+                <button onclick="toggleAdminMode()" id="adminToggleBtn" class="bg-[#161820] hover:bg-[#202430] text-gray-300 p-2.5 rounded-xl border border-[#272b38] transition text-sm flex items-center justify-center" title="สลับโหมดผู้ใช้ / Admin">
+                    <i class="fa-solid fa-user-shield text-amber-400"></i>
+                </button>
+
+                <button onclick="openDrawer('userDrawer')" class="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-3.5 py-2.5 rounded-xl transition flex items-center space-x-2 text-xs sm:text-sm font-bold shadow-md">
+                    <i class="fa-solid fa-user"></i>
+                    <span class="hidden md:inline">สมาชิก</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative bg-dot-pattern py-16 sm:py-20 px-4 sm:px-6 lg:px-8 border-b border-[#1f232e] overflow-hidden">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-4xl mx-auto text-center space-y-7 relative z-10">
+            <div class="inline-flex items-center space-x-2 bg-orange-950/40 text-orange-400 px-4 py-1.5 rounded-full border border-orange-500/30 text-xs sm:text-sm font-medium shadow-inner">
+                <span class="animate-pulse">🔥</span>
+                <span>แก้ปัญหาเจอหมูเหนียว! คัดสรรเฉพาะร้านสเปคดี</span>
+            </div>
+            
+            <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight sm:leading-none">
+                ศูนย์รวมร้านหมูกรอบคุณภาพ <br class="hidden sm:inline"/>
+                <span class="bg-gradient-to-r from-orange-400 via-amber-400 to-orange-500 bg-clip-text text-transparent font-black">
+                    การันตีหนังกรอบ เนื้อนุ่มฉ่ำ
+                </span>
+            </h1>
+            
+            <p class="text-gray-300 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto font-light leading-relaxed">
+                เว็บบอร์ด & แพลตฟอร์มค้นหาร้านหมูกรอบเด็ดทั่วไทย คัดเฉพาะร้านที่ได้คะแนนรีวิว <span class="text-amber-400 font-bold">3.5 ดาวขึ้นไป</span> <br/>
+                หนังกรอบสะท้านตับ ไม่แข็งกระด้าง ช่วยให้คุณไม่ผิดหวังในทุกมื้ออร่อย!
+            </p>
+
+            <div class="grid grid-cols-3 gap-3 sm:gap-6 max-w-2xl mx-auto pt-2">
+                <div class="bg-[#13151c]/80 p-4 sm:p-5 rounded-2xl border border-[#252936] backdrop-blur-md shadow-xl text-center">
+                    <p class="text-2xl sm:text-4xl font-extrabold text-orange-500" id="totalShopsCount">6+</p>
+                    <p class="text-[11px] sm:text-xs text-gray-400 mt-1 font-medium">ร้านหมูกรอบคุณภาพ</p>
+                </div>
+                <div class="bg-[#13151c]/80 p-4 sm:p-5 rounded-2xl border border-[#252936] backdrop-blur-md shadow-xl text-center">
+                    <p class="text-2xl sm:text-4xl font-extrabold text-amber-400">3.5+★</p>
+                    <p class="text-[11px] sm:text-xs text-gray-400 mt-1 font-medium">เรตติ้งขั้นต่ำ</p>
+                </div>
+                <div class="bg-[#13151c]/80 p-4 sm:p-5 rounded-2xl border border-[#252936] backdrop-blur-md shadow-xl text-center">
+                    <p class="text-2xl sm:text-4xl font-extrabold text-emerald-400">100%</p>
+                    <p class="text-[11px] sm:text-xs text-gray-400 mt-1 font-medium">กรอบฟูนุ่มฉ่ำ</p>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-center gap-4 pt-3">
+                <button onclick="scrollToGrid()" class="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold px-6 py-3.5 rounded-2xl shadow-xl shadow-orange-500/20 text-sm sm:text-base transition flex items-center space-x-2">
+                    <span>🍽️</span>
+                    <span>สำรวจร้านหมูกรอบยอดนิยม</span>
+                </button>
+                <button onclick="openModal('addShopModal')" class="bg-[#161820] hover:bg-[#202430] border border-[#272b38] text-gray-200 font-semibold px-6 py-3.5 rounded-2xl text-sm sm:text-base transition flex items-center space-x-2">
+                    <span>🏚️</span>
+                    <span>แนะนำร้านค้าใหม่</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Section -->
+    <main id="mainGrid" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow w-full">
+        <!-- Controls & Filters -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-8 bg-[#13151c] p-4 sm:p-5 rounded-2xl border border-[#232734]">
+            <div class="flex flex-wrap items-center gap-3">
+                <span class="text-xs font-bold text-gray-400 uppercase flex items-center">
+                    <i class="fa-solid fa-filter mr-1.5 text-orange-500"></i> กรองย่าน:
+                </span>
+                <select id="zoneFilter" onchange="filterRestaurants()" class="bg-[#1a1d26] text-gray-200 text-xs sm:text-sm rounded-xl px-3 py-2 border border-[#2c3140]">
+                    <option value="ALL">ทุกย่าน / ทุกเขต</option>
+                    <option value="ถนนจันทน์">ถนนจันทน์ / บางคอแหลม</option>
+                    <option value="ประชาชื่น">ประชาชื่น / เตาปูน</option>
+                    <option value="พญาไท">พญาไท / อารีย์</option>
+                    <option value="ตลาดน้อย">ตลาดน้อย / สัมพันธวงศ์</option>
+                    <option value="ปทุมวัน">ปทุมวัน / จุฬา / บรรทัดทอง</option>
+                    <option value="เจริญกรุง">เจริญกรุง / สาทร</option>
+                </select>
+
+                <span class="text-xs font-bold text-gray-400 uppercase flex items-center ml-2">
+                    <i class="fa-solid fa-fire mr-1.5 text-amber-400"></i> ความกรอบ:
+                </span>
+                <select id="crispFilter" onchange="filterRestaurants()" class="bg-[#1a1d26] text-gray-200 text-xs sm:text-sm rounded-xl px-3 py-2 border border-[#2c3140]">
+                    <option value="0">ทั้งหมด</option>
+                    <option value="4.5">กรอบฟูจัด (≥ 4.5/5)</option>
+                    <option value="4.0">กรอบมาตรฐาน (≥ 4.0/5)</option>
+                </select>
+            </div>
+
+            <div class="flex-1 max-w-sm">
+                <input type="text" id="mainSearchInput" oninput="syncSearch(this.value)" 
+                       placeholder="ค้นหานามร้าน หรือ เมนู..." 
+                       class="w-full bg-[#1a1d26] text-xs sm:text-sm text-gray-200 px-4 py-2 rounded-xl border border-[#2c3140] focus:outline-none focus:border-orange-500">
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <span class="text-xs text-gray-400 font-medium">เรียงตาม:</span>
+                <select id="sortBy" onchange="filterRestaurants()" class="bg-[#1a1d26] text-gray-200 text-xs sm:text-sm rounded-xl px-3 py-2 border border-[#2c3140]">
+                    <option value="rating">คะแนนรีวิวสูงสุด</option>
+                    <option value="crispness">ระดับความกรอบสูงสุด</option>
+                    <option value="name">ชื่อร้าน (ก-ฮ)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Restaurant Grid -->
+        <div id="restaurantGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+        <!-- Empty State -->
+        <div id="noResults" class="hidden text-center py-16 bg-[#13151c] rounded-2xl border border-[#232734] my-6">
+            <i class="fa-solid fa-drumstick-bite text-5xl text-gray-600 mb-4"></i>
+            <h4 class="text-lg font-bold text-gray-300">ไม่พบร้านหมูกรอบที่ค้นหา</h4>
+            <p class="text-xs text-gray-500 mt-1">ลองเปลี่ยนคำค้นหา หรือกดปุ่มแจ้งเพิ่มร้านใหม่ได้เลย</p>
+            <button onclick="resetFilters()" class="mt-4 bg-orange-500 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-orange-600 transition">
+                รีเซ็ตการค้นหา
+            </button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#08090c] border-t border-[#1f232e] py-8 px-4 text-xs text-gray-400 text-center">
+        <p>© 2026 MHUKROP TACKERS. All Rights Reserved.</p>
+    </footer>
+
+    <!-- MODAL: Add Review -->
+    <div id="addReviewModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#13151c] border border-[#232734] w-full max-w-md rounded-2xl p-6 shadow-2xl relative text-gray-200">
+            <button onclick="closeModal('addReviewModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-lg font-bold mb-1 flex items-center">
+                <i class="fa-solid fa-pen-to-square text-orange-500 mr-2"></i> เขียนรีวิวร้านหมูกรอบ
+            </h3>
+            <p id="reviewShopTitle" class="text-xs text-amber-400 font-semibold mb-4">ร้าน: -</p>
+
+            <form onsubmit="submitReview(event)" class="space-y-4">
+                <input type="hidden" id="reviewShopId">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">ชื่อผู้รีวิว / ฉายา</label>
+                    <input type="text" id="reviewerName" required placeholder="เช่น เซียนหมูกรอบย่านเตาปูน" 
+                           class="w-full bg-[#1c202b] text-white px-3 py-2 rounded-xl border border-[#2c3140] text-xs">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">คะแนนรวม (ดาว)</label>
+                        <select id="reviewRating" class="w-full bg-[#1c202b] text-white px-3 py-2 rounded-xl border border-[#2c3140] text-xs">
+                            <option value="5.0">5.0 - อร่อยมากกก</option>
+                            <option value="4.5">4.5 - เด็ดมากแนะนำ</option>
+                            <option value="4.0">4.0 - อร่อยตามมาตรฐาน</option>
+                            <option value="3.5">3.5 - ผ่านเกณฑ์ขั้นต่ำ</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">ระดับความกรอบ</label>
+                        <select id="reviewCrisp" class="w-full bg-[#1c202b] text-white px-3 py-2 rounded-xl border border-[#2c3140] text-xs">
+                            <option value="5.0">5.0 - หนังฟูสนั่นลิ้น</option>
+                            <option value="4.5">4.5 - กรอบนุ่มกำลังดี</option>
+                            <option value="4.0">4.0 - กรอบพอใช้</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">รีวิวรสชาติและหนังหมู</label>
+                    <textarea id="reviewComment" rows="3" required placeholder="บรรยายความกรอบ..." 
+                              class="w-full bg-[#1c202b] text-white p-3 rounded-xl border border-[#2c3140] text-xs"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white py-3 rounded-xl font-bold text-xs">
+                    ส่งรีวิว (POST /api/v1/reviews)
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Add Shop -->
+    <div id="addShopModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#13151c] border border-[#232734] w-full max-w-md rounded-2xl p-6 shadow-2xl relative text-gray-200">
+            <button onclick="closeModal('addShopModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-lg font-bold mb-3 flex items-center"><i class="fa-solid fa-store text-orange-500 mr-2"></i>แจ้งเพิ่มร้านหมูกรอบใหม่</h3>
+            <form onsubmit="submitNewShop(event)" class="space-y-3">
+                <input type="text" id="newShopName" required placeholder="ชื่อร้าน" class="w-full bg-[#1c202b] p-2.5 rounded-xl border border-[#2c3140] text-xs">
+                <input type="text" id="newShopZone" required placeholder="ย่าน" class="w-full bg-[#1c202b] p-2.5 rounded-xl border border-[#2c3140] text-xs">
+                <input type="text" id="newShopMenu" required placeholder="เมนูเด็ด" class="w-full bg-[#1c202b] p-2.5 rounded-xl border border-[#2c3140] text-xs">
+                <input type="text" id="newShopAddress" required placeholder="พิกัด/ที่อยู่" class="w-full bg-[#1c202b] p-2.5 rounded-xl border border-[#2c3140] text-xs">
+                <button type="submit" class="w-full bg-orange-500 text-white py-2.5 rounded-xl font-bold text-xs mt-2">ส่งข้อมูลร้านใหม่</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- DRAWER: User Profile -->
+    <div id="userDrawer" class="fixed inset-y-0 right-0 w-full max-w-sm bg-[#13151c] border-l border-[#232734] z-50 transform translate-x-full transition-transform duration-300 p-6 flex flex-col justify-between">
+        <div>
+            <div class="flex items-center justify-between border-b border-[#232734] pb-4 mb-4">
+                <h3 class="text-base font-bold text-white flex items-center">
+                    <i class="fa-solid fa-id-card text-orange-500 mr-2"></i> โปรไฟล์สมาชิก
+                </h3>
+                <button onclick="closeDrawer('userDrawer')" class="text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="bg-[#1a1d26] p-4 rounded-xl border border-[#2a2f3d] space-y-3">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-orange-500/20 text-orange-500 flex items-center justify-center font-bold text-lg border border-orange-500/30">MT</div>
+                    <div>
+                        <p class="font-bold text-white text-xs">สมาชิกสายหมูกรอบ</p>
+                        <p class="text-[11px] text-gray-400">Certified Reviewer</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button onclick="closeDrawer('userDrawer')" class="w-full bg-[#1a1d26] text-gray-300 py-2.5 rounded-xl text-xs hover:bg-[#222733] transition">ปิดหน้าต่าง</button>
+    </div>
+
+    <!-- Script Entry (JS compiled from TS / Bundler module) -->
+    <script type="module" src="dist/app.js"></script>
+</body>
+</html>
